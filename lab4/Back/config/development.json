@@ -1,0 +1,13 @@
+{
+  "server": {
+    "host": "localhost",
+    "port": 3000
+  },
+  "database": {
+      "host": "localhost",
+      "port": 5051
+  },
+  "auth":{
+    "jwt_key": "m4nj2!z78xpJ_uUV"
+  }
+}

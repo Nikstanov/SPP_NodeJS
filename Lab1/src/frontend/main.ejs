@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task List</title>
+    <link href="/styles/style.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <header class="bg-blue-600 text-white p-6 shadow-md">
+        <h1 class="text-3xl font-bold">Task List</h1>
+    </header>
+    <main class="p-6">
+        <form class="mb-6 bg-white p-6 rounded-lg shadow-md" action="/to-do/save" method="post">
+            <div class="flex flex-col md:flex-row md:items-center">
+                <input type="text"  name="title" maxlength="20" minlength="1" placeholder="Task title" class="flex-1 mr-2 p-3 border border-gray-300 rounded-md">
+                <input type="text"  name="description" maxlength="1000" placeholder="Task description" class="flex-1 mr-2 p-3 border border-gray-300 rounded-md">
+                <input type="date" name="time" class="flex-1 mr-2 p-3 border border-gray-300 rounded-md">
+                <button type="submit" class="bg-blue-600 text-white p-3 rounded-md hover:bg-blue-700">Save Task</button>
+            </div>
+        </form>
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <div>
+                <form action=<%=("/to-do?status=" + "data=")  %> method='get'>
+                    <select name="status" onchange="this.form.submit()" class="p-2 border border-gray-300 rounded-md mx-5">
+                        <%
+                            var options = [ "To-Do", "In Process", "Done", "Approved", "None"];
+                            for ( var i = 0; i < options.length; i++ )
+                            {
+                                var selected = ( curStatus == i ) ? "selected" : "";
+                                %><option value="<%=i %>" <%=selected %>><%=options[ i ] %></option><%
+                            }
+                        %>
+                    </select>
+                    <input type="date"  value=<%= curDate %> onchange="this.form.submit()" name="date" class="flex-1 mr-2 p-3 border border-gray-300 rounded-md">
+                </form>
+            </div>
+            <% if(prods.length > 0) {%>
+            
+            <ul>
+                <% for(let task of prods){ %>
+                <li class="flex flex-col md:flex-row justify-between items-center p-4 border-b border-gray-300">
+                    <div class="flex items-center w-3/4">
+                        <form id=<%=task.title%> action=<%=("/to-do/" + task.title)  %> method='post'>
+                            <select name="status" class="p-2 border border-gray-300 rounded-md mx-5">
+
+                                <%
+                                    var options = [ "To-Do", "In Process", "Done", "Approved"];
+                                    for ( var i = 0; i < options.length; i++ )
+                                    {
+                                        var selected = ( task.status == i ) ? "selected" : "";
+                                        %><option value="<%=i %>" <%=selected %>><%=options[ i ] %></option><%
+                                    }
+                                %>
+                            </select>
+                        </form>
+                        
+                        <span class="text-2xl mr-3 "><%= task.time %></span>
+                        <span class="text-2xl mr-3"><%= task.title %></span>
+                        <span class="text-lg"><%= task.description %></span>
+                    </div>
+                    <div class="flex items-center mt-2 md:mt-0">
+                        <% if(task.file !== null) {%>
+                        <a href=<%=("/uploads/" + task.file) %> download>
+                            <div class="mr-3">download</div>
+                        </a>
+                        <% } %>
+                        <form action=<%=("/to-do/" + task.title + "/upload_file")%> method="post" enctype="multipart/form-data">
+                            <label for= <%= "upload_" + task.title%>  class="inline-block cursor-pointer">
+                                Upload
+                            </label>
+                            <input type="file" id= <%= "upload_" + task.title%> onchange="this.form.submit()" name = "file" class="hidden">
+                        </form>
+                    </div>
+                    <button type="submit" form=<%=task.title%> class="bg-blue-600 w-1/12 mx-4 text-white p-2 rounded-md hover:bg-blue-700">save</button>
+                    <form class="w-1/12" action=<%=("/to-do/" + task.title)  %> method="delete">
+                        <button type="submit" class="w-full bg-red-600 text-white p-2 rounded-md hover:bg-red-700">Delete</button>
+                    </form>
+                    
+                </li>
+                <% } %>
+
+            </ul>
+            <% } 
+                else {
+            %>
+                <h1 class="text-2xl text-center">Empty</h1>
+                
+            <%} %>
+        </div>
+    </main>
+</body>
+</html>
+
+
