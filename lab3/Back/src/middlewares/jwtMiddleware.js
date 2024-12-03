@@ -5,7 +5,6 @@ const config = require('config');
 const jwtKey = config.get('auth.jwt_key');
 
 function verifyToken(req, res, next) {
-    console.log('Cookies: ', req.cookies)
     let token = undefined
     if(req.headers.authorization){
         token = req.headers.authorization.split(' ')[1]

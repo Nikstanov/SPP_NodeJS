@@ -20,7 +20,7 @@ var corsOptions = {
 app.use(cors(corsOptions))
 
 app.use(express.static(path.join(__dirname, '..', 'public')))
-// app.use(cookieParser())
+app.use(cookieParser())
 app.use(bodyParser.json())
 
 const tasksRoute = require('./routes/tasks.js')
