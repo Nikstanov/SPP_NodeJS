@@ -1,6 +1,6 @@
 const path = require('path')
 const express = require('express')
-const rootDir = require('../util/dirpath')
+const rootDir = require('../util/path')
 const Task = require('../models/task')
 const fs = require("fs");
 const multer = require('multer')

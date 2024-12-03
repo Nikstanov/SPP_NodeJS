@@ -1,0 +1,35 @@
+strings:
+  INSTALL_TIMESTAMP: 638289080225927195
+  PlayShortOnLaunch: intro\Spaced_Out_Intro
+  SaveFilenameKey/: C:\Users\nstah\OneDrive\Documents\Klei\OxygenNotIncluded\cloud_save_files\76561198444634588\Cocktus\Cocktus.sav
+  SandboxTools.SelectedEntity: MushBar
+  SandboxTools.SelectedDisease: FoodPoisoning
+ints:
+  SESSION_ID: 1
+  LowResTextures: 0
+  ResolutionWidth: 2560
+  ResolutionHeight: 1600
+  RefreshRate: 60
+  FullScreen: 1
+  ColorModeID: 0
+  PatchNotesVersion: 9
+  LoadScreenCloudTutorialTimes: 1
+  GAME_ID: 1
+  SandboxTools.SelectedElement: 137
+  SandboxTools.DiseaseCount: 0
+  SandboxTools.BrushSize: 1
+  SandbosTools.MoraleAdjustment: 50
+floats:
+  Volume_SFX: 1
+  Volume_Music: 1
+  Volume_Ambience: 1
+  Volume_Master: 1
+  Volume_UI: 1
+  UIScalePref: 130
+  CameraSpeed: 1
+  SandboxTools.NoiseScale: 1
+  SandboxTools.NoiseDensity: 1
+  SandboxTools.Mass: 1
+  SandbosTools.Temperature: 300
+  SandbosTools.TemperatureAdditive: 5
+  SandbosTools.StressAdditive: 50

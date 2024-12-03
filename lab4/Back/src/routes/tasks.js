@@ -1,10 +1,11 @@
 const path = require('path')
 const express = require('express')
-const rootDir = require('../util/path')
+const rootDir = require('../util/dirpath')
 const Task = require('../models/task')
 const fs = require("fs");
 const multer = require('multer')
-const {body, validationResult } = require('express-validator')
+const {body, validationResult } = require('express-validator');
+const dirpath = require('../util/dirpath');
 
 const taskPostValidator = [
     body('title').notEmpty().isLength({min: 5, max: 50}).withMessage("Enter title with at least 5 characters").escape(),
@@ -347,6 +348,90 @@ module.exports = function(io,socket){
                 error: "Internal server error"
             })
         })
+        
+    })
+    socket.on('/upload_file', ({task_id, filename, buffer}, callback) => {
+        const filePath = path.join(dirpath, '..', 'public' , 'uploads', task_id + "_" + filename);
+        
+        fs.writeFile(filePath, buffer, (err) => {
+            if (err) {
+                console.error('Ошибка при записи файла:', err);
+                callback({
+                    status: 500, 
+                    error: "Internal server error"
+                })
+            } else {
+                Task.findOne({_id:task_id})
+                .then((task) => {
+                    if(!task){
+                        fs.rm(path.join(dirpath, '..','public' , 'uploads', task_id + "_" + filename))
+                        callback({
+                            status: 400, 
+                            error: "Task not exists or you are not a owner"
+                        })
+                        return
+                    }
+                    if(task.file !== null){ 
+                        fs.rm(path.join(dirpath,'..', 'public' , 'uploads', task.file))
+                    }
+                    task.file = task_id + "_" + filename
+                    task.save().then((newTask) => {
+                        for(let i = 0; i < newTask.owners.length; i++){
+                            const user = newTask.owners[i].user;
+                            if(user._id){
+                                io.to(user._id.toString()).emit("update", newTask);
+                            }
+                            else{
+                                io.to(user.toString()).emit("update", newTask);
+                            }
+                        }
+                        callback({
+                            status: 200,
+                            data: newTask
+                        })
+                        return
+                    })
+                })
+            }
+        });
+    })
+    socket.on('/download_file', ({task_id}, callback) => {
+        Task.findOne({_id:task_id})
+            .then((task) => {
+                if(!task){
+                    callback({
+                        status: 400, 
+                        error: "Task not exists or you are not a owner"
+                    })
+                    return
+                }
+                if(task.file !== null){ 
+                    const filePath = path.join(dirpath,'..', 'public' , 'uploads', task.file);
+                    charInd = task.file.indexOf("_");
+                    filename = task.file.substring(charInd + 1)
+                    fs.readFile(filePath, (err, data) => {
+                        if (err) {
+                            console.error('Ошибка при записи файла:', err);
+                            callback({
+                                status: 500, 
+                                error: "Internal server error"
+                            })
+                        } else {
+                          callback({
+                            status: 200,
+                            buffer: data,
+                            filename: filename
+                          })
+                        }
+                      });   
+                }   
+                else{
+                    callback({
+                        status: 400, 
+                        error: "File not exists"
+                    })
+                }
+            })
     })
     // socket.on("/upload_file", (file, data, callback) => {
     //     const task_id = data.task_id;

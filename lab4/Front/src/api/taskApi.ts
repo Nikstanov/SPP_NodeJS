@@ -94,7 +94,23 @@ function deleteTask(id: string) {
   })
 }
 
+function uploadFile(buffer: any, filename: string, task_id: string) {
+  return socket
+    .emitWithAck('/upload_file', { task_id: task_id, filename: filename, buffer: buffer })
+    .then((response: any) => {
+      return response.data
+    })
+}
+
+function downloadFile(task_id: string) {
+  return socket.emitWithAck('/download_file', { task_id: task_id }).then((response: any) => {
+    return response
+  })
+}
+
 export {
+  uploadFile,
+  downloadFile,
   getTasks,
   saveTask,
   deleteTask,

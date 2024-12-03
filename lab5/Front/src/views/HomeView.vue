@@ -4,6 +4,7 @@ import { useTasksStore } from '@/stores/tasks'
 import { storeToRefs } from 'pinia'
 import { ref } from 'vue'
 import FileUpload from 'primevue/fileupload'
+
 import { uploadFile, downloadFile } from '@/api/taskApi'
 
 const tasksStore = useTasksStore()
@@ -54,23 +55,25 @@ function uploadFileEvent(event: Event, task_id: string) {
   const reader = new FileReader()
 
   reader.onload = () => {
-    uploadFile(reader.result, file.name, task_id)
+    const res = reader.result as string
+    uploadFile(res.split(',')[1], file.name, task_id)
   }
 
-  reader.readAsArrayBuffer(file)
+  reader.readAsDataURL(file)
 }
 
 function downloadFileEvent(task_id: string) {
-  downloadFile(task_id).then(({ status, buffer, filename }) => {
-    if (status !== 200) {
-      return
+  downloadFile(task_id).then(({ buffer, filename }) => {
+    const binaryString = atob(buffer)
+    const length = binaryString.length
+    const uint8Array = new Uint8Array(length)
+    for (let i = 0; i < length; i++) {
+      uint8Array[i] = binaryString.charCodeAt(i)
     }
-    const blob = new Blob([buffer])
+    const blob = new Blob([uint8Array])
 
-    // Создать URL для Blob-объекта
     const url = URL.createObjectURL(blob)
 
-    // Создать ссылку для скачивания файла
     const a = document.createElement('a')
     a.href = url
     a.download = filename
@@ -78,7 +81,6 @@ function downloadFileEvent(task_id: string) {
     a.click()
     document.body.removeChild(a)
 
-    // Освободить URL
     URL.revokeObjectURL(url)
   })
 }
@@ -160,6 +162,13 @@ function downloadFileEvent(task_id: string) {
                 <span class="w-3/4 text-lg text-pretty">{{ task.description }}</span>
               </div>
               <div class="flex items-center mt-2 md:mt-0">
+                <!-- <a
+                  v-show="task.file !== null"
+                  :href="'http://localhost:3000/uploads/' + task.file"
+                  download
+                >
+                  <div class="mr-3">download</div>
+                </a> -->
                 <a v-show="task.file !== null" @click="downloadFileEvent(task._id)">
                   <div class="mr-3">download</div>
                 </a>
