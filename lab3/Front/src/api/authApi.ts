@@ -28,7 +28,7 @@ function signUp(email: string, password: string, nickname: string, fingerpring: 
       email: email,
       password: password,
       nickname: nickname,
-      fingerpring: fingerpring
+      fingerprint: fingerpring
     })
     .then((res) => {
       return res.data
